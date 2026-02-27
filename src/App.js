@@ -14,6 +14,23 @@ import { INITIAL_PRODUCTS } from "./data/products";
 export default function App() {
   const [page, setPage] = useState("Home");
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // ══════════════════════════════════════════════════════
+  //  🔐 SECRET ADMIN ACCESS 
+  //
+  //  1. Keyboard shortcut : Ctrl + Shift + A
+
+  // ══════════════════════════════════════════════════════
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "A") {
+        setPage("Admin");
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
   const [products, setProducts] = useState(() => {
     try {
       const stored = localStorage.getItem("virida_products");

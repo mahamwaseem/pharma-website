@@ -1,7 +1,10 @@
-function Navbar({ page, setPage }) {
-  const links = ["Home", "Products", "About", "Contact", "Admin"];
+export default function Navbar({ page, setPage }) {
+  
+  const links = ["Home", "Products", "About", "Contact"];
+
   return (
     <nav className="navbar">
+      {/* ── Logo / Brand ── */}
       <div className="navbar-brand" onClick={() => setPage("Home")}>
         <div className="brand-icon">V</div>
         <div>
@@ -9,17 +12,19 @@ function Navbar({ page, setPage }) {
           <span className="brand-sub">Pharmaceuticals</span>
         </div>
       </div>
+
+      {/* ── Nav Links (Admin hidden) ── */}
       <div className="nav-links">
-        {links.map(l => (
+        {links.map((link) => (
           <button
-            key={l}
-            className={`nav-link ${l === "Admin" ? "admin-link" : ""} ${page === l ? "active" : ""}`}
-            onClick={() => setPage(l)}
-          >{l}</button>
+            key={link}
+            className={`nav-link ${page === link ? "active" : ""}`}
+            onClick={() => setPage(link)}
+          >
+            {link}
+          </button>
         ))}
       </div>
     </nav>
   );
 }
-
-export default Navbar;
