@@ -1,14 +1,43 @@
 import { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) return;
-    setSent(true);
-    setForm({ name: "", email: "", message: "" });
-    setTimeout(() => setSent(false), 5000);
+    
+    setLoading(true);
+    setError("");
+
+    try {
+      const { error: insertError } = await supabase
+        .from("patients")
+        .insert([
+          {
+            name: form.name,
+            email: form.email,
+            message: form.message,
+          },
+        ]);
+
+      if (insertError) {
+        setError("Failed to send message. Please try again.");
+        console.error("Supabase error:", insertError);
+      } else {
+        setSent(true);
+        setForm({ name: "", email: "", message: "" });
+        setTimeout(() => setSent(false), 5000);
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+      console.error("Error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,7 +63,10 @@ function ContactPage() {
               <label>Message</label>
               <textarea placeholder="Tell us how we can help…" value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
             </div>
-            <button className="submit-btn" onClick={handleSubmit}>Send Message →</button>
+            <button className="submit-btn" onClick={handleSubmit} disabled={loading}>
+              {loading ? "Sending..." : "Send Message →"}
+            </button>
+            {error && <div className="error-msg">❌ {error}</div>}
             {sent && <div className="success-msg">✅ Message sent! We'll be in touch within 24 hours.</div>}
           </div>
 
